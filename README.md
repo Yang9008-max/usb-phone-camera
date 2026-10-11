@@ -4,11 +4,11 @@
 
 ## 下载使用
 
-从本仓库 Releases 下载 `usb-phone-camera-windows-x64.zip`，完整解压。包内已附带 Node.js，无须安装开发环境。
+从本仓库 Releases 下载 `usb-phone-camera-windows-x64.zip`，完整解压。包内已附带 Node.js 和手机端 Android IP Camera APK，无须另找手机安装包或安装开发环境。
 
 1. 将手机通过 USB 数据线接到要使用的 Windows x64 电脑。
-2. 在手机设置中开启 **USB 网络共享**。
-3. 打开手机上的 [Android IP Camera](https://github.com/DigitallyRefined/android-ip-camera/releases/tag/v0.14.0)。已安装的手机不需要重新安装。
+2. 首次使用时，打开解压后的 **手机端** 文件夹，将其中的 `androidipcamera-0.14.0-universal-release.apk` 复制到手机 Download 文件夹，在手机文件管理器中点 APK 安装并允许相机权限。复制文件时可将 USB 用途切为文件传输；已安装的手机不需要重新安装。
+3. 文件复制完成后，在手机设置中开启 **USB 网络共享**，打开 Android IP Camera。手机也可从本仓库 Release 单独下载 APK 安装。
 4. 手机 App 设置：**TLS Version → TLS Disabled (HTTP only)**；关闭 **Enable Authentication**；端口使用默认 **4444**。若保留认证，在电脑网页的“手机连接设置”中填写账号密码。
 5. 双击 **启动USB摄像头.cmd**。程序识别本机 USB 网卡的手机网关，打开 `http://127.0.0.1:9890/`。
 
@@ -52,4 +52,6 @@ node tests/receiver.test.js
 
 需要手机摄像头 App 和 USB 网络共享，并非只靠浏览器就能读取外接手机摄像头。实际延迟由手机采集、USB 传输和显示决定；本机读取已接收图片的耗时不等于完整拍摄延迟。
 
-Node.js 许可证在 `third-party/NODE-LICENSE.txt`，免安装包也附带同一许可证。手机 App 由上游项目独立维护，未包含在本仓库的 Windows 包内。
+Node.js 许可证在 `third-party/NODE-LICENSE.txt`，免安装包也附带同一许可证。
+
+手机 App 来自 [DigitallyRefined/android-ip-camera v0.14.0](https://github.com/DigitallyRefined/android-ip-camera/releases/tag/v0.14.0)，随包提供未经修改的官方通用 APK，其 MIT 许可证与安装说明位于 `mobile/` 和安装包的 **手机端** 文件夹。APK SHA-256：`79e5ef172011b9c3e4c4f0ee1b951601cbe6d2cbff02677b67e718812d39db00`。

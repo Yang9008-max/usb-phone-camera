@@ -1,0 +1,13 @@
+手机端：Android IP Camera 0.14.0（安卓通用 APK）
+
+1. 把本文件夹中的 androidipcamera-0.14.0-universal-release.apk 复制到手机 Download 文件夹。通过 USB 复制时，在手机 USB 用途中选择文件传输。
+2. 在手机文件管理器中点 APK 安装，按提示允许该文件管理器安装应用。打开 App 并允许相机权限。
+3. 在 App 右上角 Settings 中，TLS Version 选 TLS Disabled (HTTP only)，关闭 Enable Authentication；端口保持默认 4444。
+4. 复制完成后开启手机 USB 网络共享，返回摄像头 App 首页并保持运行。
+5. 在手机连接的电脑上双击“启动USB摄像头.cmd”。
+
+手机已安装这款 App 时不需要重装。
+本 APK 来自上游官方发布，未经修改。MIT 许可证附在本文件夹 LICENSE 中。
+上游项目：https://github.com/DigitallyRefined/android-ip-camera
+发布版本：https://github.com/DigitallyRefined/android-ip-camera/releases/tag/v0.14.0
+SHA-256：79e5ef172011b9c3e4c4f0ee1b951601cbe6d2cbff02677b67e718812d39db00
