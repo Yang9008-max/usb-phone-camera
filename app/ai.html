@@ -8,7 +8,7 @@
 <section><h2>让 AI 持续观察</h2>
 <form id="settings"><label for="baseURL">API 地址</label><input id="baseURL" type="url" value="https://api.openai.com/v1" required spellcheck="false"><p class="muted">填写到 /v1 的基础地址。画面会发送到你选择的 API 服务。</p>
 <div class="row"><div><label for="model">模型</label><input id="model" value="gpt-6.1-sol" required spellcheck="false"></div><div><label for="protocol">接口类型</label><select id="protocol"><option value="responses">Responses（官方推荐）</option><option value="chat">Chat Completions（兼容中转）</option></select></div></div>
-<label for="apiKey">API 密钥</label><input id="apiKey" type="password" autocomplete="off" placeholder="只在本机内存保存，停止后清除" required><p class="muted">不使用你的 ChatGPT / Codex 登录凭据。首次试用填好密钥后再开始，API 调用按服务商规则计费。</p>
+<label for="apiKey">API 密钥</label><input id="apiKey" type="password" autocomplete="off" placeholder="只在本机内存保存，停止后清除" required><p class="muted">需要允许普通 API 调用的密钥；仅限官方 Codex 客户端的账户会拒绝此接入方式。不使用你的 ChatGPT / Codex 登录凭据，调用按服务商规则计费。</p>
 <label for="task">你希望它关注什么？</label><textarea id="task" rows="3" maxlength="2000">描述正在发生的事情，重点关注动作和变化，简短地用中文告诉我。</textarea>
 <details><summary>观察频率</summary><div class="row"><div><label for="interval">每轮最短间隔</label><select id="interval"><option value="4">4 秒（默认）</option><option value="2">2 秒（更频繁）</option><option value="8">8 秒</option><option value="15">15 秒（较省费用）</option></select></div><div><label for="sampleFPS">AI 采样速度</label><select id="sampleFPS"><option value="1">每秒 1 帧</option><option value="2">每秒 2 帧</option></select></div></div><p class="muted">每轮最多发送最近约 3 秒内的 6 帧，上一轮完成后才分析新片段。不会积压待分析视频。建议手机分辨率设置为 720p 左右。</p></details>
 <div class="row actions"><button id="start" type="submit">开始持续分析</button><button id="stop" type="button" disabled>停止</button></div></form>

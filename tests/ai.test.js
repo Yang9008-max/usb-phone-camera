@@ -136,3 +136,25 @@ test('upstream failures and broken streams stop analysis without publishing part
     }
   } finally { ai.stop(); await api.close(); }
 });
+
+test('shows actual Codex client restriction before generic fallback SSE, including split JSON and HTTP 403', async () => {
+  let mode = 'sse';
+  const api = await mock(async (req, res) => {
+    await requestBody(req);
+    res.writeHead(mode === 'sse' ? 200 : 403, { 'Content-Type': mode === 'sse' ? 'text/event-stream' : 'application/json' });
+    if (mode === 'sse') res.write(': keepalive\n\n');
+    const prefix = JSON.stringify({ error: { type: 'forbidden_error', message: 'This account only allows Codex official clients; fixture-secret' } });
+    res.write(prefix.slice(0, 31)); await delay(10); res.write(prefix.slice(31));
+    res.end('event: response.failed\ndata: ' + JSON.stringify({ type: 'response.failed', response: { error: { code: 'upstream_error', message: 'Upstream request failed' } } }) + '\n\n');
+  });
+  let clock = 100000; const ai = new VideoAI({ now: () => clock });
+  try {
+    for (mode of ['sse', 'http']) {
+      ai.start({ baseURL: api.url, apiKey: 'fixture-secret' }); ai.frame(jpeg, clock, 1); clock += 1000; ai.frame(jpeg, clock, 2); await ai.tick();
+      const state = ai.status();
+      assert.equal(state.running, false); assert.equal(state.completed, 0); assert.equal(ai.config, null);
+      assert.equal(state.errorCode, 'codex_client_only'); assert.match(state.error, /仅允许官方 Codex 客户端/);
+      assert.doesNotMatch(JSON.stringify(state), /fixture-secret|Upstream request failed/);
+    }
+  } finally { ai.stop(); await api.close(); }
+});

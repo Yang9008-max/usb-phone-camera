@@ -1,6 +1,6 @@
 {
   "name": "usb-phone-camera",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Android phone camera over USB tethering to a local Windows webpage",
   "scripts": { "test": "node tests/receiver.test.js && node --test tests/ai.test.js" },

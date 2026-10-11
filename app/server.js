@@ -36,7 +36,7 @@ function fresh() { return state.latest && Date.now() - state.lastAt < 5000; }
 function status() {
   const now = Date.now();
   state.recent = state.recent.filter(t => t > now - 2000);
-  return { app: 'usb-local', version: '0.2.0', connected: Boolean(fresh()), target: state.target, error: state.error,
+  return { app: 'usb-local', version: '0.2.1', connected: Boolean(fresh()), target: state.target, error: state.error,
     frames: state.sequence, fps: Math.round(state.recent.length / 2), ageMs: state.lastAt ? now - state.lastAt : null,
     installer: installerURL, lanURL };
 }

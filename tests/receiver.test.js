@@ -32,7 +32,7 @@ async function main() {
     }
     assert.ok(status?.connected, errors || 'Portable USB receiver did not receive frames');
     assert.equal(status.app, 'usb-local'); assert.equal(status.target, target);
-    assert.equal(status.version, '0.2.0');
+    assert.equal(status.version, '0.2.1');
     assert.deepEqual(Buffer.from(await (await fetch(base + '/frame.jpg')).arrayBuffer()), jpeg);
     const page = await (await fetch(base + '/')).text(); assert.match(page, /手机直接连接本机/); assert.doesNotMatch(page, /来源电脑/);
     assert.equal(status.lanURL, null);
