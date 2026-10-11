@@ -13,9 +13,10 @@ $cameraRunning=$false
 try{
   $cameraStatus=Invoke-RestMethod -Uri ($cameraURL+'api/status') -TimeoutSec 2
   if($cameraStatus.app -ne 'usb-local'){throw '9890 端口被其他接收程序占用。若之前运行了局域网接收端，请先双击旧包中的关闭本地预览.cmd。'}
+  if($cameraStatus.version -ne '0.2.0'){throw '检测到旧版 USB 接收服务。请先双击旧包中的关闭USB摄像头.cmd，再从新包启动，才能使用 AI 分析功能。'}
   $cameraRunning=$true
 }catch{
-  if($_.Exception.Message -match '9890 端口'){throw}
+  if($_.Exception.Message -match '9890 端口|检测到旧版'){throw}
 }
 if(-not $cameraRunning){
   $cameraProcess=Start-Process -FilePath (Join-Path $cameraRoot 'node.exe') -ArgumentList @(('"'+(Join-Path $cameraRoot 'server.js')+'"'),'--phone',$cameraPhoneURL) -WorkingDirectory $cameraRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $cameraRoot 'receiver.log') -RedirectStandardError (Join-Path $cameraRoot 'receiver-error.log')

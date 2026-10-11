@@ -5,6 +5,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const net = require('node:net');
 const { MjpegDecoder } = require('./mjpeg');
+const { VideoAI } = require('./ai');
+const ai = new VideoAI();
 
 const args = process.argv.slice(2);
 function option(name, fallback) { const i = args.indexOf(name); return i < 0 ? fallback : args[i + 1]; }
@@ -34,11 +36,12 @@ function fresh() { return state.latest && Date.now() - state.lastAt < 5000; }
 function status() {
   const now = Date.now();
   state.recent = state.recent.filter(t => t > now - 2000);
-  return { app: 'usb-local', connected: Boolean(fresh()), target: state.target, error: state.error,
+  return { app: 'usb-local', version: '0.2.0', connected: Boolean(fresh()), target: state.target, error: state.error,
     frames: state.sequence, fps: Math.round(state.recent.length / 2), ageMs: state.lastAt ? now - state.lastAt : null,
     installer: installerURL, lanURL };
 }
 function disconnect(message = '已断开') {
+  ai.resetCamera();
   generation++;
   clearTimeout(retry);
   if (upstream) upstream.destroy();
@@ -81,6 +84,7 @@ function connect(value, username = '', password = '') {
         if (current !== generation) return;
         receivedFrame = true;
         state.latest = jpeg; state.lastAt = Date.now(); state.sequence++;
+        ai.frame(jpeg, state.lastAt, state.sequence);
         state.recent.push(state.lastAt);
         while (state.recent[0] < state.lastAt - 2000) state.recent.shift();
         state.error = '';
@@ -128,6 +132,9 @@ async function handleRequest(request, response) {
       const data = JSON.parse(body || '{}');
       if (route === '/api/connect') connect(data.url, data.username || '', data.password || '');
       else if (route === '/api/disconnect') disconnect();
+      else if (route === '/api/ai/start') { ai.start(data); json(response, 200, ai.status()); return; }
+      else if (route === '/api/ai/stop') { ai.stop(); json(response, 200, ai.status()); return; }
+      else if (route === '/api/ai/heartbeat') { ai.heartbeat(); json(response, 200, ai.status()); return; }
       else { json(response, 404, { error: '未知请求' }); return; }
       json(response, 200, status());
     } catch (err) { json(response, 400, { error: err.message }); }
@@ -135,6 +142,10 @@ async function handleRequest(request, response) {
   }
   if (request.method !== 'GET') { send(response, 405, 'text/plain', 'Method not allowed'); return; }
   if (route === '/api/status') { json(response, 200, { ...status(), readOnly: !localControl }); return; }
+  if (route === '/api/ai/status') {
+    if (!localControl) { json(response, 403, { error: 'AI 分析请在接收手机的电脑上使用' }); return; }
+    json(response, 200, ai.status()); return;
+  }
   if (route === '/frame.jpg' || route === '/capture.jpg') {
     if (!fresh()) { send(response, 503, 'text/plain; charset=utf-8', '暂无新鲜摄像头画面'); return; }
     send(response, 200, 'image/jpeg', state.latest, route === '/capture.jpg'
@@ -154,7 +165,8 @@ async function handleRequest(request, response) {
     response.writeHead(200, { 'Content-Type': 'application/zip', 'Content-Length': fs.statSync(packagePath).size, 'Content-Disposition': 'attachment; filename="camera-lan-receiver.zip"', 'Cache-Control': 'no-store' });
     fs.createReadStream(packagePath).pipe(response); return;
   }
-  const files = { '/': 'index.html', '/camera': 'camera.html', '/webcam': 'webcam.html' };
+  const files = { '/': 'index.html', '/camera': 'camera.html', '/webcam': 'webcam.html', '/ai': 'ai.html' };
+  if (route === '/ai.js') { send(response, 200, 'text/javascript; charset=utf-8', fs.readFileSync(path.join(__dirname, 'ai-ui.js'))); return; }
   if (route === '/webcam' && !localControl) { send(response, 403, 'text/plain; charset=utf-8', '虚拟摄像头检测请在接收电脑打开'); return; }
   if (files[route]) { send(response, 200, 'text/html; charset=utf-8', fs.readFileSync(path.join(__dirname, files[route]))); return; }
   send(response, 404, 'text/plain', 'Not found');

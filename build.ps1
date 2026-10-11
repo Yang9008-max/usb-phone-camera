@@ -14,7 +14,7 @@ New-Item -ItemType Directory -Path $cameraMobileStage -Force | Out-Null
 foreach($cameraMobileName in @($cameraAPK,'LICENSE','安装说明.txt')){
   Copy-Item -LiteralPath (Join-Path $cameraMobile $cameraMobileName) -Destination (Join-Path $cameraMobileStage $cameraMobileName) -Force
 }
-$cameraNames=@('server.js','mjpeg.js','index.html','camera.html','webcam.html','启动.ps1','关闭.ps1','启动USB摄像头.cmd','关闭USB摄像头.cmd','使用说明.txt')
+$cameraNames=@('server.js','mjpeg.js','ai.js','ai-ui.js','ai.html','index.html','camera.html','webcam.html','启动.ps1','关闭.ps1','启动USB摄像头.cmd','关闭USB摄像头.cmd','使用说明.txt')
 foreach($cameraName in $cameraNames){
   Copy-Item -LiteralPath (Join-Path $PSScriptRoot ('app\'+$cameraName)) -Destination (Join-Path $cameraStage $cameraName) -Force
 }
