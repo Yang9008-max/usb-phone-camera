@@ -1,0 +1,7 @@
+artifacts/
+usb-phone-camera-windows-x64.zip
+app/node.exe
+app/NODE-LICENSE.txt
+app/*.log
+app/*.pid
+node_modules/
